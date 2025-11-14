@@ -10,20 +10,20 @@ def extract(file_name: str) -> pd.DataFrame: # simple extract function
 
 
 def transform(df):
-    #Normalizimi i emrave te kolonave
+    #Normalizimi i emrave te kolonave --Column name normalization
     df = normalize_column_names(df)
 
-    #Konvertimi i dates
+    #Konvertimi i dates -- Date Conversion
     df["expiration_date"] = pd.to_datetime(df["expiration_date"], format="%m/%d/%Y")
   
-    #Heq hapesirat e paneojshme ne kolona
+    #Heq hapesirat e paneojshme ne kolona -- Removes unnecessary spaces in columns
     for col in df.select_dtypes(include='object').columns:
         df[col] = df[col].str.strip()
     
-    #Heq rreshat qe gjinden nga dy her
+    #Heq rreshat qe gjinden nga dy her -- Remove duplicate rows
     df = df.drop_duplicates(subset=['vehicle_license_number', 'dmv_license_plate_number'])
     
-    #Mban vetem kto kolona
+    #Mban vetem kto kolona -- Retain only these Columns
     keep_cols = [
     'vehicle_license_number',
     'license_type',
@@ -35,10 +35,10 @@ def transform(df):
     ]
     df = df[keep_cols]
 
-    #Transformimi me Panadaas
+    #Transformimi me Pandas -- Transformation with Pandas
     df = df.sort_values(by="expiration_date", ascending=True)
     
-    #Transformimi me duckdb
+    #Transformimi me duckdb -- Transformation with Duckdb
     # con = duckdb.connect()
     # con.register("vhc", df)
 
